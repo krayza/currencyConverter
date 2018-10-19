@@ -5,7 +5,7 @@
 File name: main.py
 Author: Arnaud Bourget
 Date created: 09/10/2018
-Date last modified: 18/10/2018
+Date last modified: 19/10/2018
 Python Version: 3.6
 """
 
@@ -101,7 +101,7 @@ class CurrencyConverter(QDialog):
     def fromCalendarHandler(self):
         """
         PyQt5 Calendar Widget handler
-        Allow to know which calendar was the last one the user used
+        Allow to know which calendar was the last one used
         """
 
         self.last_clicked = "from"
@@ -110,7 +110,7 @@ class CurrencyConverter(QDialog):
     def toCalendarHandler(self):
         """
         PyQt5 Calendar Widget handler
-        Allow to know which calendar was the last one the user used
+        Allow to know which calendar was the last one used
         """
 
         self.last_clicked = "to"
@@ -120,8 +120,8 @@ class CurrencyConverter(QDialog):
         """
         PyQt5 Widgets handler
 
-        This method fetches the information provided by the user in the currency converter part
-        and process them to get the converted value based on the most recent rate
+        This method fetches the information provided by the user and process
+        them to get the conversion and the exchange rate graph
         """
 
         try:
@@ -154,13 +154,12 @@ class CurrencyConverter(QDialog):
 
             nb_days = (self.to_date - self.from_date).days + 1
             date_range = range(0, nb_days)
-            daysXRange = nb_days if nb_days <= 21 else 20
 
             self.rates_plot.clear()
             self.legend.scene().removeItem(self.legend)
             self.legend = self.rates_plot.addLegend()
 
-            self.rates_plot.setXRange(0, daysXRange)
+            self.rates_plot.setXRange(0, nb_days)
             self.rates_plot.setYRange(0, max(from_rates + to_rates))
             self.rates_plot.plot(date_range, from_rates, pen='b', symbol='x', symbolPen='b', symbolBrush=0.2, name=from_)
             self.rates_plot.plot(date_range, to_rates, pen='r', symbol='o', symbolPen='r', symbolBrush=0.2, name=to)
@@ -252,8 +251,9 @@ class CurrencyConverter(QDialog):
                         header_list.append(col.strip())
                     notFound = False
                 x += 1
-            cur_code = list(filter(None, header_list))
-            cur_code.append('EUR')
+            self.currencies = list(filter(None, header_list))
+            self.currencies.append('EUR')
+            self.currencies = self.currencies[1:]
 
             data = []
             for row in file_handler[x:]:
@@ -263,21 +263,19 @@ class CurrencyConverter(QDialog):
                     data.append(list(filter(None, [x.replace('\n', '') for x in row.split(',')])))
 
             for row in data:
-                for i in range(len(cur_code) - 1):
+                for i in range(len(self.currencies)):
                     try:
-                        if cur_code[i + 1] not in self.rates:
-                            self.rates[cur_code[i + 1]] = {row[0]: row[i + 1]}
+                        if self.currencies[i] not in self.rates:
+                            self.rates[self.currencies[i]] = {row[0]: row[i + 1]}
                         else:
-                            self.rates[cur_code[i + 1]].update({row[0]: row[i + 1]})
+                            self.rates[self.currencies[i]].update({row[0]: row[i + 1]})
                     except IndexError:
                         # We reached the EUR section
-                        if cur_code[i + 1] not in self.rates:
-                            self.rates[cur_code[i + 1]] = {row[0]: '1.0000'}
+                        if self.currencies[i] not in self.rates:
+                            self.rates[self.currencies[i]] = {row[0]: '1.0000'}
                         else:
-                            self.rates[cur_code[i + 1]].update({row[0]: '1.0000'})
+                            self.rates[self.currencies[i]].update({row[0]: '1.0000'})
 
-            self.currencies = cur_code
-            self.currencies.remove('Date')
             self.currencies.sort()
 
         except Exception as e:

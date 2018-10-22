@@ -92,11 +92,20 @@ class CurrencyConverter(QDialog):
 
         self.from_currency.currentIndexChanged.connect(self.updateUI)
         self.to_currency.currentIndexChanged.connect(self.updateUI)
-        self.from_amount.valueChanged.connect(self.updateUI)
+        self.from_amount.valueChanged.connect(self.fromAmountHandler)
         self.from_calendar.selectionChanged.connect(self.fromCalendarHandler)
         self.to_calendar.selectionChanged.connect(self.toCalendarHandler)
 
         self.show()
+
+    def fromAmountHandler(self):
+        """
+        PyQt5 DoubleSpinBox Widget handler
+        Allow to know that nothing in relationship with the graph changed
+        """
+
+        self.last_clicked = False
+        self.updateUI()
 
     def fromCalendarHandler(self):
         """
@@ -137,43 +146,45 @@ class CurrencyConverter(QDialog):
             self.from_date = self.from_calendar.selectedDate().toPyDate()
             self.to_date = self.to_calendar.selectedDate().toPyDate()
 
-            # Update the dates selected according to the user selection if the user selects a negative range
-            if self.to_date < self.from_date:
-                if self.last_clicked == 'from':
-                    date = self.from_calendar.selectedDate()
-                    self.to_calendar.setSelectedDate(date)
-                    self.to_date = date.toPyDate()
-                else:
-                    date = self.to_calendar.selectedDate()
-                    self.from_calendar.setSelectedDate(date)
-                    self.from_date = date.toPyDate()
+            # Updating the graph only if something in relationship with it changes
+            if self.last_clicked:
+                # Update the dates selected according to the user selection if the user selects a negative range
+                if self.to_date < self.from_date:
+                    if self.last_clicked == 'from':
+                        date = self.from_calendar.selectedDate()
+                        self.to_calendar.setSelectedDate(date)
+                        self.to_date = date.toPyDate()
+                    else:
+                        date = self.to_calendar.selectedDate()
+                        self.from_calendar.setSelectedDate(date)
+                        self.from_date = date.toPyDate()
 
-            from_rates = self.getRatesInRange(self.rates[from_])
-            to_rates = self.getRatesInRange(self.rates[to])
-            conv_rates = self.getConvRates(from_rates, to_rates)
+                from_rates = self.getRatesInRange(self.rates[from_])
+                to_rates = self.getRatesInRange(self.rates[to])
+                conv_rates = self.getConvRates(from_rates, to_rates)
 
-            nb_days = (self.to_date - self.from_date).days + 1
-            date_range = range(0, nb_days)
+                nb_days = (self.to_date - self.from_date).days + 1
+                date_range = range(0, nb_days)
 
-            self.rates_plot.clear()
-            self.legend.scene().removeItem(self.legend)
-            self.legend = self.rates_plot.addLegend()
+                self.rates_plot.clear()
+                self.legend.scene().removeItem(self.legend)
+                self.legend = self.rates_plot.addLegend()
 
-            self.rates_plot.setXRange(0, nb_days)
-            self.rates_plot.setYRange(0, max(from_rates + to_rates))
-            self.rates_plot.plot(date_range, from_rates, pen='b', symbol='x', symbolPen='b', symbolBrush=0.2, name=from_)
-            self.rates_plot.plot(date_range, to_rates, pen='r', symbol='o', symbolPen='r', symbolBrush=0.2, name=to)
-            self.rates_plot.plot(date_range, conv_rates, pen='g', symbol='+', symbolPen='g', symbolBrush=0.2, name='conversion rate')
+                self.rates_plot.setXRange(0, nb_days)
+                self.rates_plot.setYRange(0, max(from_rates + to_rates + conv_rates))
+                self.rates_plot.plot(date_range, from_rates, pen='b', symbol='x', symbolPen='b', symbolBrush=0.2, name=from_)
+                self.rates_plot.plot(date_range, to_rates, pen='r', symbol='o', symbolPen='r', symbolBrush=0.2, name=to)
+                self.rates_plot.plot(date_range, conv_rates, pen='g', symbol='+', symbolPen='g', symbolBrush=0.2, name='conversion rate')
         except Exception as e:
             print('Failed to update UI')
             print(e)
 
     def getConvRates(self, from_rates, to_rates):
         """
-        Calculation of the conversion rates
+        Calculation of the conversion rates from from_rates to to_rates
 
-        :param from_rates: (list) The rates from a currency
-        :param to_rates: (list) The rates to a currency
+        :param from_rates: (list) The rates of the currency we're conversing from
+        :param to_rates: (list) The rates to the currency we're conversing to
         :return: (list) The conversion rates
         """
 
@@ -241,6 +252,7 @@ class CurrencyConverter(QDialog):
             for row in file:
                 file_handler.append(row.decode())
 
+            # getting the currency headers into header_list
             header_list = []
             notFound = True
             x = 0
@@ -253,15 +265,16 @@ class CurrencyConverter(QDialog):
                 x += 1
             self.currencies = list(filter(None, header_list))
             self.currencies.append('EUR')
-            self.currencies = self.currencies[1:]
+            self.currencies = self.currencies[1:] # Removing the "Date" entry
 
             data = []
             for row in file_handler[x:]:
                 if row.startswith('`\n'):
                     break
                 else:
-                    data.append(list(filter(None, [x.replace('\n', '') for x in row.split(',')])))
+                    data.append(list(filter(None, [x.replace('\n', '') for x in row.split(',')]))) # Removing any empty extra columns at the end of each rows
 
+            # filling my self.rates with the currency in the format {CURR: {date: rate, ...}, ...}
             for row in data:
                 for i in range(len(self.currencies)):
                     try:

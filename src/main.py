@@ -5,13 +5,14 @@
 File name: main.py
 Author: Arnaud Bourget
 Date created: 09/10/2018
-Date last modified: 19/10/2018
+Date last modified: 23/10/2018
 Python Version: 3.6
 """
 
 import sys
 from PyQt5.QtWidgets import QApplication, QDialog, QLabel, QComboBox, QDoubleSpinBox, QGridLayout, QCalendarWidget
 from PyQt5.QtCore import QDate, Qt
+from PyQt5.QtGui import QFont
 
 from decimal import Decimal
 from datetime import timedelta
@@ -32,7 +33,7 @@ class CurrencyConverter(QDialog):
         """
         CurrencyConverter class initialization
 
-        Set all the class variables and call the initialize UI method
+        Set all the class variables like the labels and comboboxes that will be used in the initUI method
         """
 
         super().__init__()
@@ -59,12 +60,17 @@ class CurrencyConverter(QDialog):
         self.from_date = QDate()
         self.to_date = QDate()
         self.last_clicked = ""
+        hint_font = QFont()
+        hint_font.setItalic(True)
+        self.graph_hint = QLabel('Hint: you can interact with the graph using your mouse')
+        self.graph_hint.setFont(hint_font)
+
 
         self.initUI()
 
     def initUI(self):
         """
-        Initialize all the PyQt Widgets and connect them to their handler
+        Positioning our differents widgets in our Layout and connect the widgets to their handler
         """
 
         grid = QGridLayout()
@@ -81,6 +87,7 @@ class CurrencyConverter(QDialog):
         grid.addWidget(self.to_calendar, 2, 2, 1, 2)
 
         grid.addWidget(self.rates_plot, 3, 0, 1, 4)
+        grid.addWidget(self.graph_hint, 4, 0, 1, 4)
 
         self.rates_plot.showGrid(x=True, y=True)
         self.rates_plot.setLabel('left', 'Rate')
@@ -104,8 +111,10 @@ class CurrencyConverter(QDialog):
         Allow to know that nothing in relationship with the graph changed
         """
 
-        self.last_clicked = False
+        self.last_clicked = "amount"
         self.updateUI()
+        self.last_clicked = ""
+
 
     def fromCalendarHandler(self):
         """
@@ -147,7 +156,7 @@ class CurrencyConverter(QDialog):
             self.to_date = self.to_calendar.selectedDate().toPyDate()
 
             # Updating the graph only if something in relationship with it changes
-            if self.last_clicked:
+            if self.last_clicked != 'amount':
                 # Update the dates selected according to the user selection if the user selects a negative range
                 if self.to_date < self.from_date:
                     if self.last_clicked == 'from':

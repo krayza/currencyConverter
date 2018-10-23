@@ -40,11 +40,14 @@ class CurrencyConverter(QDialog):
 
         self.rates = dict()
         self.currencies = list()
-        self.getData()
+        self.getData()  # Fetch the data from the csv online file
+
+        # Initialization of the currencies choice dropdown boxes
         self.from_currency = QComboBox()
         self.from_currency.addItems(self.currencies)
         self.to_currency = QComboBox()
         self.to_currency.addItems(self.currencies)
+
         self.from_amount = QDoubleSpinBox()
         self.from_amount.setRange(0.01, 10000000.00)
         self.from_amount.setValue(1.00)
@@ -60,6 +63,7 @@ class CurrencyConverter(QDialog):
         self.from_date = QDate()
         self.to_date = QDate()
         self.last_clicked = ""
+
         hint_font = QFont()
         hint_font.setItalic(True)
         self.graph_hint = QLabel('Hint: you can interact with the graph using your mouse')
@@ -115,7 +119,6 @@ class CurrencyConverter(QDialog):
         self.updateUI()
         self.last_clicked = ""
 
-
     def fromCalendarHandler(self):
         """
         PyQt5 Calendar Widget handler
@@ -143,15 +146,18 @@ class CurrencyConverter(QDialog):
         """
 
         try:
+            # Getting the values selected by the user
             from_ = self.from_currency.currentText()
             to = self.to_currency.currentText()
             from_amt = Decimal(self.getMostRecentRelevantRate(self.rates[from_]))
             to_amt = Decimal(self.getMostRecentRelevantRate(self.rates[to]))
             amt = Decimal(self.from_amount.value())
 
+            # Calculating the new conversion value
             amount = (to_amt / from_amt) * amt
             self.to_amount.setText('%.02f' % amount)
 
+            # Getting the dates selected by the user
             self.from_date = self.from_calendar.selectedDate().toPyDate()
             self.to_date = self.to_calendar.selectedDate().toPyDate()
 
@@ -168,17 +174,21 @@ class CurrencyConverter(QDialog):
                         self.from_calendar.setSelectedDate(date)
                         self.from_date = date.toPyDate()
 
+                # Getting and calculating the currencies rates according to the range selected by the user
                 from_rates = self.getRatesInRange(self.rates[from_])
                 to_rates = self.getRatesInRange(self.rates[to])
                 conv_rates = self.getConvRates(from_rates, to_rates)
 
+                # Getting the number of days included in the range
                 nb_days = (self.to_date - self.from_date).days + 1
                 date_range = range(0, nb_days)
 
+                # Clearing the graph and the legend
                 self.rates_plot.clear()
                 self.legend.scene().removeItem(self.legend)
                 self.legend = self.rates_plot.addLegend()
 
+                # Updating the graph with our new values
                 self.rates_plot.setXRange(0, nb_days)
                 self.rates_plot.setYRange(0, max(from_rates + to_rates + conv_rates))
                 self.rates_plot.plot(date_range, from_rates, pen='b', symbol='x', symbolPen='b', symbolBrush=0.2, name=from_)
@@ -274,14 +284,14 @@ class CurrencyConverter(QDialog):
                 x += 1
             self.currencies = list(filter(None, header_list))
             self.currencies.append('EUR')
-            self.currencies = self.currencies[1:] # Removing the "Date" entry
+            self.currencies = self.currencies[1:]  # Removing the "Date" entry
 
             data = []
             for row in file_handler[x:]:
                 if row.startswith('`\n'):
                     break
                 else:
-                    data.append(list(filter(None, [x.replace('\n', '') for x in row.split(',')]))) # Removing any empty extra columns at the end of each rows
+                    data.append(list(filter(None, [x.replace('\n', '') for x in row.split(',')])))  # Removing any empty extra columns at the end of each rows
 
             # filling my self.rates with the currency in the format {CURR: {date: rate, ...}, ...}
             for row in data:

@@ -13,8 +13,10 @@ jobs:
       github_head_ref: ${{ github }}
 
     steps:
+      - name: Git Checkout
+        uses: actions/checkout@v1
       - name: Print event
       	run: |
-	  echo " ${{ env.github_head_ref }} "
-	  echo "${{ github.head_ref }}"
-	  echo "${{ github.base_ref }}"
+	  echo ${{ env.github_head_ref }}
+	  echo ${{ github.head_ref }}
+	  echo ${{ github.base_ref }}

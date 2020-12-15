@@ -16,8 +16,6 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: ${{ github.head_ref }}
-      - name: Go back to attached head
-        run: git switch -
       - name: Rebase autosquash
         run: git rebase -i --autosquash ${{ github.event.pull_request.base.sha }}
       - name: Add Tag on last commit

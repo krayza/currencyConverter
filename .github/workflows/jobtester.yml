@@ -10,8 +10,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - uses: actions/checkout@v2
       - name: Print event
-      	run: | echo "${{ github.event }}"
-
-
-	
+      	run: echo "${{ github.event }}"

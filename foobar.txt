@@ -1,1 +1,2 @@
 foobar
+another important foobar

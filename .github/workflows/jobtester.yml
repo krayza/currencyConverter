@@ -18,7 +18,7 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
       - name: Rebase autosquash
-        run: git rebase -i --autosquash HEAD~"$((PR_COMMITS+1))"
+        run: git rebase -i --autosquash HEAD~"$PR_COMMITS"
       - name: Add Tag on last commit
         run: git tag ${{ github.head_ref }}
       - name: Push on current branch

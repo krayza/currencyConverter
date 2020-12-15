@@ -17,7 +17,7 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
       - name: Rebase autosquash
-        run: git rebase -i --autosquash HEAD~${{ github.event.pull_request.commits + 1 }}
+        run: git rebase -i --autosquash HEAD~${{ ${{ github.event.pull_request.commits }} + 1 }}
       - name: Add Tag on last commit
         run: git tag ${{ github.head_ref }}
       - name: Push on current branch

@@ -11,14 +11,15 @@ jobs:
 
     env:
       GITHUB_CONTEXT: ${{ toJson(github) }}
-      PR_COMMITS: ${{ github.event.pull_request.commits }}
+#      PR_COMMITS: ${{ github.event.pull_request.commits }}
     steps:
       - name: Git Checkout
         uses: actions/checkout@v2
         with:
           ref: ${{ github.head_ref }}
-      - name: Rebase autosquash
-        run: git rebase -i --autosquash HEAD~"$PR_COMMITS"
+      - run: git rebase -i --autosquash HEAD~${{ github.event.pull_request.commits }}
+#      - name: Rebase autosquash
+#        run: git rebase -i --autosquash HEAD~"$PR_COMMITS"
       - name: Add Tag on last commit
         run: git tag ${{ github.head_ref }}
       - name: Push on current branch

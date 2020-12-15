@@ -11,10 +11,10 @@ jobs:
 
     env:
       github_head_ref: ${{ github }}
-      github_
 
     steps:
       - name: Print event
       	run: |
+	  echo " ${{ env.github_head_ref }} "
 	  echo "${{ github.head_ref }}"
 	  echo "${{ github.base_ref }}"

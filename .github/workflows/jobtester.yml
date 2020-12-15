@@ -17,4 +17,8 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
       - name: Rebase autosquash
-        run: echo "$GITHUB_CONTEXT"
+        run: git rebase -i --autosquash ${{ github.event.pull_request.base.sha }}
+      - name: Add Tag on last commit
+        run: git tag ${{ github.head_ref }}
+      - name: Push on current branch
+        run: git push origin ${{ github.head_ref }}

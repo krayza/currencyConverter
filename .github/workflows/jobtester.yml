@@ -1,0 +1,24 @@
+name: Job Tester
+
+on:
+  pull_request:
+    types: [ labeled ]
+    
+jobs:
+  job-test:
+    name: Job Test
+    runs-on: ubuntu-latest
+
+    env:
+      GITHUB_CONTEXT: ${{ toJson(github) }}
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v2
+      - name: Go back to attached head
+        run: git switch -
+      - name: Rebase autosquash
+        run: git rebase -i --autosquash ${{ github.event.pull_request.base.sha }}
+      - name: Add Tag on last commit
+        run: git tag ${{ github.head_ref }}
+      - name: Push on current branch
+        run: git push -f origin ${{ github.head_ref }}

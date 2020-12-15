@@ -10,13 +10,12 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      github_head_ref: ${{ github }}
+      github_head_ref: ${{ github.head_ref }}
 
     steps:
       - name: Git Checkout
         uses: actions/checkout@v1
       - name: Print event
       	run: |
-	  echo ${{ env.github_head_ref }}
-	  echo ${{ github.head_ref }}
+	  echo ${{env.github_head_ref}}
 	  echo ${{ github.base_ref }}

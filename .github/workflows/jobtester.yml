@@ -9,11 +9,10 @@ jobs:
     name: Job Test
     runs-on: ubuntu-latest
 
-    env:
-      GITHUB_CONTEXT: ${{ github }}
-
     steps:
       - name: Git Checkout
         uses: actions/checkout@v2
       - name: Rebase autosquash
+        env:
+      	  GITHUB_CONTEXT: ${{ github }}
         run: echo "$GITHUB_CONTEXT"

@@ -1,0 +1,17 @@
+name: Job Tester
+
+on:
+  pull_request:
+    types: [ labeled ]
+    
+jobs:
+  job-test:
+    name: Job Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Print event
+      	run: | echo "${{ github.event }}"
+
+
+	

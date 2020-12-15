@@ -15,5 +15,4 @@ jobs:
     steps:
       - name: Git Checkout
         run: git checkout ${{ github.base_ref }}
-      - name: Print logs
-      	run: git log
+

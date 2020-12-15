@@ -9,7 +9,12 @@ jobs:
     name: Job Test
     runs-on: ubuntu-latest
 
+    env:
+      github_head_ref: ${{ github }}
+      github_
+
     steps:
-      - uses: actions/checkout@v2
       - name: Print event
-      	run: echo "${{ github }}"
+      	run: |
+	  echo "${{ github.head_ref }}"
+	  echo "${{ github.base_ref }}"

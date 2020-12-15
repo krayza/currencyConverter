@@ -18,9 +18,7 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
       - name: Rebase autosquash
-        run: |
-          echo ::set-env name=REBASE_UPSTREAM::$(($PR_COMMITS+1))
-          git rebase -i --autosquash HEAD~"$REBASE_UPSTREAM"
+        run: git rebase -i --autosquash HEAD~"$((PR_COMMITS+1))"
       - name: Add Tag on last commit
         run: git tag ${{ github.head_ref }}
       - name: Push on current branch

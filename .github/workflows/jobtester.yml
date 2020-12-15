@@ -14,5 +14,4 @@ jobs:
 
     steps:
       - name: Git Checkout
-        run: git checkout ${{ github.base_ref }}
-
+        run: git checkout ${{ github.head_ref }}

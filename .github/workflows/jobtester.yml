@@ -10,12 +10,10 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      github_head_ref: ${{ github.head_ref }}
+      GITHUB_CONTEXT: ${{ github }}
 
     steps:
       - name: Git Checkout
         uses: actions/checkout@v2
       - name: Rebase autosquash
-        run: git rebase -i --autosquash ${{ github.base_ref }}
-      - name: Push on current branch
-        run: git push origin ${{ github.head_ref }}
+        run: echo "$GITHUB_CONTEXT"

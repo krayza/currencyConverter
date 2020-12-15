@@ -14,11 +14,9 @@ jobs:
     steps:
       - name: Git Checkout
         uses: actions/checkout@v2
-        with:
-          ref: ${{ github.event.pull_request.head.sha }}
       - name: Rebase autosquash
         run: git rebase -i --autosquash ${{ github.event.pull_request.base.sha }}
       - name: Add Tag on last commit
         run: git tag ${{ github.head_ref }}
       - name: Push on current branch
-        run: git push origin ${{ github.head_ref }}
+        run: git push -f origin ${{ github.head_ref }}

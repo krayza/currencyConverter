@@ -41,8 +41,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      BASE_BRANCH: origin/${{ github.base_ref }}
-      BRANCH_TO_REBASE: ${{ github.head_ref }}
+      BASE_BRANCH: ${{ github.base_ref }}
+      BRANCH_TO_REBASE: origin/${{ github.head_ref }}
     steps:
       - name: Checkout on base branch
         uses: actions/checkout@v2

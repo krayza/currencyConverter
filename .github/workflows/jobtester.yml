@@ -25,7 +25,9 @@ jobs:
       - run: git fetch origin
       - run: git checkout ${{github.head_ref}}
       - run: git log
-      - run: git rebase -i --autosquash HEAD~1
+      - run: git rebase -i --autosquash ${{github.pull_request.base.sha}}
+        env:
+          EDITOR: true
 #      - run: git rebase -i --autosquash refs/heads/${{github.head_ref}}~10
 #      - run: git rebase -i --autosquash origin/${{github.head_ref}}~10
 #      - name: Rebase autosquash

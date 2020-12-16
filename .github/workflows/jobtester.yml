@@ -17,6 +17,9 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: ${{ github.head_ref }}
+      - run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
       - run: git branch --set-upstream-to=origin/${{github.head_ref}}
       - run: git remote -vv
       - run: git fetch origin

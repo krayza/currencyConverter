@@ -11,7 +11,6 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      GITHUB_CONTEXT: ${{ toJson(github) }}
       BRANCH_NAME: ${{ github.head_ref }}
       COMMIT_TO_REBASE: ${{ github.event.pull_request.base.sha }}
       TAG_NAME: feature_${{ github.head_ref }}

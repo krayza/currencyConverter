@@ -16,7 +16,7 @@ jobs:
       COMMIT_TO_REBASE: ${{ github.pull_request.base.sha }}
       TAG_NAME: feature_${BRANCH_NAME}
     steps:
-      - name: Git Checkout
+      - name: Checkout on branch
         uses: actions/checkout@v2
         with:
           ref: ${{ github.head_ref }}
@@ -25,7 +25,7 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-      - run: git rebase -i --autosquash ${COMMIT_TO_REBASE}
+      - run: git rebase -i --autosquash ${{ github.pull_request.base.sha }}
         env:
           EDITOR: true
       - name: Add Tag on last commit
@@ -41,11 +41,14 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      BASE_BRANCH: ${{ github.base_ref }}
+      BASE_BRANCH: origin/${{ github.base_ref }}
       BRANCH_TO_REBASE: ${{ github.head_ref }}
     steps:
       - name: Checkout on base branch
-        run: git checkout ${BASE_BRANCH}
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.base_ref }}
+          fetch-depth: 0
       - name: Rebase
         run: git rebase ${BRANCH_TO_REBASE}
       - name: Push on base branch

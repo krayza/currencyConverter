@@ -13,12 +13,12 @@ jobs:
     env:
       BRANCH_NAME: ${{ github.head_ref }}
       COMMIT_TO_REBASE: ${{ github.event.pull_request.base.sha }}
-      TAG_NAME: feature_${{ github.head_ref }}
+      TAG_NAME: feature_${BRANCH_NAME}
     steps:
       - name: Checkout on branch
         uses: actions/checkout@v2
         with:
-          ref: ${{ github.head_ref }}
+          ref: ${BRANCH_NAME}
           fetch-depth: 0
       - name: Set local git config
         run: |

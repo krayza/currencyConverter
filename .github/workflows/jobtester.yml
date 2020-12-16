@@ -17,6 +17,8 @@ jobs:
         uses: actions/checkout@v2
         with:
           ref: ${{ github.head_ref }}
+      - run: git branch --set-upstream-to=origin/${{github.head_ref}}
+      - run: git fetch ${{github.head_ref}}
       - run: git remote -v
       - run: git rebase -i --autosquash 8679d217954c8cb01100fd94a83ebaa9cfe550ca
 #      - run: git rebase -i --autosquash origin/${{github.head_ref}}~10

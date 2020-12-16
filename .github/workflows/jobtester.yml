@@ -11,28 +11,20 @@ jobs:
 
     env:
       GITHUB_CONTEXT: ${{ toJson(github) }}
-#      PR_COMMITS: ${{ github.event.pull_request.commits }}
     steps:
       - name: Git Checkout
         uses: actions/checkout@v2
         with:
           ref: ${{ github.head_ref }}
           fetch-depth: 0
-      - run: |
+      - name: Set local git config
+        run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-      - run: git branch --set-upstream-to=origin/${{github.head_ref}}
-      - run: git fetch origin
-      - run: git checkout ${{github.head_ref}}
-      - run: git log
-      - run: git rebase -i --autosquash ${{github.pull_request.base.sha}}
+      - run: git rebase -i --autosquash ${{ github.pull_request.base.sha }}
         env:
           EDITOR: true
-#      - run: git rebase -i --autosquash refs/heads/${{github.head_ref}}~10
-#      - run: git rebase -i --autosquash origin/${{github.head_ref}}~10
-#      - name: Rebase autosquash
-#        run: git rebase -i --autosquash HEAD~"$PR_COMMITS"
       - name: Add Tag on last commit
-        run: git tag ${{ github.head_ref }}
+        run: git tag feature_${{ github.head_ref }}
       - name: Push on current branch
         run: git push --force-with-lease origin ${{ github.head_ref }}

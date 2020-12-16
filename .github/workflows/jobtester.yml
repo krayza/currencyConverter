@@ -21,14 +21,14 @@ jobs:
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
       - run: git branch --set-upstream-to=origin/${{github.head_ref}}
-      - run: git remote -vv
       - run: git fetch origin
-      - run: git rebase -i --autosquash refs/heads/${{github.head_ref}}~10
-#      - run: git rebase -i --autosquash --root 8679d217954c8cb01100fd94a83ebaa9cfe550ca
+      - run: git checkout ${{github.head_ref}}
+      - run: git rebase -i --autosquash 8679d217954c8cb01100fd94a83ebaa9cfe550ca
+#      - run: git rebase -i --autosquash refs/heads/${{github.head_ref}}~10
 #      - run: git rebase -i --autosquash origin/${{github.head_ref}}~10
 #      - name: Rebase autosquash
 #        run: git rebase -i --autosquash HEAD~"$PR_COMMITS"
       - name: Add Tag on last commit
         run: git tag ${{ github.head_ref }}
       - name: Push on current branch
-        run: git push -f origin ${{ github.head_ref }}
+        run: git push --force-with-lease origin ${{ github.head_ref }}

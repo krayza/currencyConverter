@@ -14,7 +14,7 @@ jobs:
       GITHUB_CONTEXT: ${{ toJson(github) }}
       BRANCH_NAME: ${{ github.head_ref }}
       COMMIT_TO_REBASE: ${{ github.pull_request.base.sha }}
-      TAG_NAME: feature_${BRANCH_NAME}
+      TAG_NAME: feature_${{ github.head_ref }}
     steps:
       - name: Checkout on branch
         uses: actions/checkout@v2

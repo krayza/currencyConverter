@@ -1,2 +1,2 @@
 foobar
-hello world
+another foobar

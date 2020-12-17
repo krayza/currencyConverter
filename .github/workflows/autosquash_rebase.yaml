@@ -6,19 +6,20 @@ on:
     
 jobs:
   autosquash:
-    name: Autosquash and Tag
+    name: Autosquash, Tag and Rebase on base branch
     if: contains(github.event.label.name, 'autosquash-and-rebase')
     runs-on: ubuntu-latest
 
     env:
       BRANCH_NAME: ${{ github.head_ref }}
+      BASE_BRANCH: ${{ github.base_ref }}
       COMMIT_TO_REBASE: ${{ github.event.pull_request.base.sha }}
-      TAG_NAME: feature_${BRANCH_NAME}
+      TAG_NAME: feature_${{ github.head_ref }}
     steps:
       - name: Checkout on branch
         uses: actions/checkout@v2
         with:
-          ref: ${BRANCH_NAME}
+          ref: ${{ github.head_ref }}
           fetch-depth: 0
       - name: Set local git config
         run: |
@@ -27,28 +28,12 @@ jobs:
       - run: git rebase -i --autosquash ${COMMIT_TO_REBASE}
         env:
           EDITOR: true
-      - name: Add Tag on last commit
-        run: git tag ${TAG_NAME}
-      - name: Push new history and tag
+      - name: Add Tag on last commit and push it
         run: |
-          git push --force-with-lease origin ${BRANCH_NAME}
+          git tag ${TAG_NAME}
           git push origin ${TAG_NAME}
-
-  rebase-on-base:
-    name: Rebase on base branch
-    needs: autosquash
-    runs-on: ubuntu-latest
-
-    env:
-      BASE_BRANCH: ${{ github.base_ref }}
-      BRANCH_TO_REBASE: origin/${{ github.head_ref }}
-    steps:
-      - name: Checkout on base branch
-        uses: actions/checkout@v2
-        with:
-          ref: ${{ github.base_ref }}
-          fetch-depth: 0
-      - name: Rebase
-        run: git rebase ${BRANCH_TO_REBASE}
-      - name: Push on base branch
-        run: git push origin ${BASE_BRANCH}
+      - name: Rebase new history on base branch and push it
+        run: |
+          git checkout ${BASE_BRANCH}
+          git rebase ${BRANCH_NAME}
+          git push origin ${BASE_BRANCH}

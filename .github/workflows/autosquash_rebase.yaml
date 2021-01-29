@@ -37,7 +37,7 @@ jobs:
           git checkout ${BASE_BRANCH}
           git rebase ${BRANCH_NAME}
           git push origin ${BASE_BRANCH}
-      -name: Remove Tag if action failed
+      - name: Remove Tag if action failed
         if: failure()
         run: |
           git push --delete origin ${TAG_NAME}

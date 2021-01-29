@@ -1,2 +1,2 @@
 foobar
-another foobar
+a different foobar

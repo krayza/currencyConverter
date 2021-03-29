@@ -14,6 +14,7 @@ jobs:
       BRANCH_NAME: ${{ github.head_ref }}
       BASE_BRANCH: ${{ github.base_ref }}
       TAG_NAME: feature_${{ github.head_ref }}
+      PULL_REQUEST_NUMBER: ${{ github.event.number }}
     steps:
       - name: Checkout on branch
         uses: actions/checkout@v2
@@ -40,4 +41,8 @@ jobs:
           git rebase ${BRANCH_NAME}
           git push origin ${BASE_BRANCH}
       - name: Close PR
-        uses: superbrothers/close-pull-request@v3
+        uses: peter-evans/close-pull@v1
+        with:
+          pull-request-number: ${PULL_REQUEST_NUMBER}
+          comment: Auto-closing pull request
+          delete-branch: true

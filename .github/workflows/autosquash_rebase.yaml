@@ -3,7 +3,7 @@ name: Autosquash and Rebase
 on:
   pull_request:
     types: [ labeled ]
-    
+
 jobs:
   autosquash:
     name: Autosquash, Tag and Rebase on base branch
@@ -13,7 +13,6 @@ jobs:
     env:
       BRANCH_NAME: ${{ github.head_ref }}
       BASE_BRANCH: ${{ github.base_ref }}
-      COMMIT_TO_REBASE: ${{ github.event.pull_request.base.sha }}
       TAG_NAME: feature_${{ github.head_ref }}
     steps:
       - name: Checkout on branch
@@ -25,19 +24,20 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-      - run: git rebase -i --autosquash ${COMMIT_TO_REBASE}
+      - name: Rebase branch on base branch
+        run: git rebase origin/${BASE_BRANCH}
+      - name: Autosquash fixup commits
+        run: git rebase -i --autosquash origin/${BASE_BRANCH}
         env:
           EDITOR: true
       - name: Add Tag on last commit and push it
         run: |
           git tag ${TAG_NAME}
           git push origin ${TAG_NAME}
-      - name: Rebase new history on base branch and push it
+      - name: Rebase new squashed history on base branch and push it
         run: |
           git checkout ${BASE_BRANCH}
           git rebase ${BRANCH_NAME}
           git push origin ${BASE_BRANCH}
-      - name: Remove Tag if action failed
-        if: failure()
-        run: |
-          git push --delete origin ${TAG_NAME}
+      - name: Close PR
+        uses: superbrothers/close-pull-request@v3

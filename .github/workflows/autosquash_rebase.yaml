@@ -40,9 +40,5 @@ jobs:
           git checkout ${BASE_BRANCH}
           git rebase ${BRANCH_NAME}
           git push origin ${BASE_BRANCH}
-      - name: Close PR
-        uses: peter-evans/close-pull@v1
-        with:
-          pull-request-number: ${PULL_REQUEST_NUMBER}
-          comment: Auto-closing pull request
-          delete-branch: true
+      - name: Delete branch
+        run: git push --delete origin ${BRANCH_NAME}

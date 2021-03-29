@@ -39,5 +39,5 @@ jobs:
           git checkout ${BASE_BRANCH}
           git rebase ${BRANCH_NAME}
           git push origin ${BASE_BRANCH}
-      - name: Close PR
-        uses: superbrothers/close-pull-request@v3
+      - name: Delete branch
+        run: git push origin --delete ${BRANCH_NAME}

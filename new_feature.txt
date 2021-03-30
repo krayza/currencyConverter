@@ -1,5 +1,9 @@
 new_feature_2
 
 def this_feature
-    pp is freaking amazing
+    if condition
+        pp is freaking amazing
+    else
+	pp stinks as fuck
+    end
 end

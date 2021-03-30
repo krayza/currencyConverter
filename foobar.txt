@@ -1,3 +1,8 @@
 foobar
 another foobar
 yet another
+
+def new_feature
+    pp trop cool et encore plus !!
+end
+

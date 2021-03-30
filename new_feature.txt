@@ -1,1 +1,5 @@
 new_feature_2
+
+def this_feature
+    pp is freaking amazing
+end

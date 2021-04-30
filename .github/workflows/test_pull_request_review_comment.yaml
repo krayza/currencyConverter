@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      ENV: ${{ env }}
+      ENV: ${{ github.env }}
       GITHUB: ${{ github }}
       BRANCH_NAME: ${{ github.head_ref }}
       BASE_BRANCH: ${{ github.base_ref }}

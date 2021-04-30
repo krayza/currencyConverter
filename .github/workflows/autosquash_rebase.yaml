@@ -1,0 +1,44 @@
+name: Autosquash and Rebase
+
+on:
+  pull_request:
+    types: [ labeled ]
+
+jobs:
+  autosquash:
+    name: Autosquash, Tag and Rebase on base branch
+    if: contains(github.event.label.name, 'autosquash-and-rebase')
+    runs-on: ubuntu-latest
+
+    env:
+      BRANCH_NAME: ${{ github.head_ref }}
+      BASE_BRANCH: ${{ github.base_ref }}
+      TAG_NAME: feature_${{ github.head_ref }}
+      PULL_REQUEST_NUMBER: ${{ github.event.number }}
+    steps:
+      - name: Checkout on branch
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+      - name: Set local git config
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+      - name: Rebase branch on base branch
+        run: git rebase origin/${BASE_BRANCH}
+      - name: Autosquash fixup commits
+        run: git rebase -i --autosquash origin/${BASE_BRANCH}
+        env:
+          EDITOR: true
+      - name: Add Tag on last commit and push it
+        run: |
+          git tag ${TAG_NAME}
+          git push origin ${TAG_NAME}
+      - name: Rebase new squashed history on base branch and push it
+        run: |
+          git checkout ${BASE_BRANCH}
+          git rebase ${BRANCH_NAME}
+          git push origin ${BASE_BRANCH}
+      - name: Delete branch
+        run: git push --delete origin ${BRANCH_NAME}

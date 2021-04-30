@@ -12,7 +12,6 @@ jobs:
 
     env:
       ENV: ${{ github.env }}
-      GITHUB: ${{ github }}
       BRANCH_NAME: ${{ github.head_ref }}
       BASE_BRANCH: ${{ github.base_ref }}
       TAG_NAME: feature_${{ github.head_ref }}

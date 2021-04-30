@@ -11,10 +11,10 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      ENV: ${{ github.env }}
-      BRANCH_NAME: ${{ github.head_ref }}
-      BASE_BRANCH: ${{ github.base_ref }}
-      TAG_NAME: feature_${{ github.head_ref }}
+      PULL_REQUEST: ${{ github.event.issue.pull_request }}
+      BRANCH_NAME: ${{ github.event.issue.pull_request.head_ref }}
+      BASE_BRANCH: ${{ github.event.issue.pull_request.base_ref }}
+      TAG_NAME: feature_${{ github.event.issue.pull_request.head_ref }}
     steps:
       - name: Checkout on branch
         uses: actions/checkout@v2

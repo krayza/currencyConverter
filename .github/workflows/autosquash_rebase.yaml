@@ -14,7 +14,6 @@ jobs:
       BRANCH_NAME: ${{ github.head_ref }}
       BASE_BRANCH: ${{ github.base_ref }}
       TAG_NAME: feature_${{ github.head_ref }}
-      PULL_REQUEST_NUMBER: ${{ github.event.number }}
     steps:
       - name: Checkout on branch
         uses: actions/checkout@v2

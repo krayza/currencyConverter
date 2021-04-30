@@ -1,12 +1,13 @@
-name: Autosquash and Rebase
+name: TEST
 
 on:
-  pull_request_review_comment:
+  issue_comment:
     types: [ created ]
 
 jobs:
   autosquash:
-    name: TEST
+    name: TEST JOB
+    if: github.event.issue.pull_request
     runs-on: ubuntu-latest
 
     env:

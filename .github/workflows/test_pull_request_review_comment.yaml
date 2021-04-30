@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
+      ENV: ${{ github.event }}
       BRANCH_NAME: ${{ github.event.issue.pull_request.head_ref }}
       BASE_BRANCH: ${{ github.event.issue.pull_request.base_ref }}
       TAG_NAME: feature_${{ github.event.issue.pull_request.head_ref }}
